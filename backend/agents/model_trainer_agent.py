@@ -1,19 +1,19 @@
 from backend.ml.automl import AutoML
 
 
-class AutoMLAgent:
+class ModelTrainerAgent:
     """
-    AI Agent responsible for training and selecting
-    the best Machine Learning model.
+    AI Agent responsible for training Machine Learning models.
     """
 
     def __init__(self, dataframe):
-
         self.df = dataframe
 
     def run(self, target_column):
 
-        return AutoML.run(
+        automl = AutoML()
+
+        return automl.run(
             self.df,
             target_column
         )
