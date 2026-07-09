@@ -2,19 +2,22 @@ import pandas as pd
 
 
 class DatasetService:
-    """
-    Provides dataset information.
-    """
 
     @staticmethod
     def get_basic_info(df: pd.DataFrame):
 
         return {
 
-            "Rows": df.shape[0],
+            "Rows": len(df),
 
-            "Columns": df.shape[1],
+            "Columns": len(df.columns),
 
-            "Column Names": list(df.columns)
+            "Missing Values": int(df.isna().sum().sum()),
+
+            "Duplicate Rows": int(df.duplicated().sum()),
+
+            "Column Names": list(df.columns),
+
+            "Data Types": df.dtypes.astype(str).to_dict()
 
         }
