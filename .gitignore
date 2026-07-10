@@ -54,3 +54,14 @@ Thumbs.db
 # Temporary Files
 # ==============================
 temp/
+
+# ==============================
+# Generated Reports
+# ==============================
+*.pdf
+
+# Generated Report Charts
+backend/reports/assets/
+
+# Uploaded Datasets
+data/uploads/

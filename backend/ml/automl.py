@@ -123,14 +123,26 @@ class AutoML:
 
         return {
 
-            "task": task,
+    "task": task,
 
-            "metric": metric,
+    "metric": metric,
 
-            "leaderboard": leaderboard,
+    "leaderboard": leaderboard,
 
-            "best_model": best,
+    "best_model": best,
 
-            "model_path": model_path
+    "trained_model": best_model,
 
-        }
+    "X_train": X_train,
+
+    "X_test": X_test,
+
+    "y_train": y_train,
+
+    "y_test": y_test,
+
+    "feature_names": X.columns.tolist(),
+
+    "model_path": model_path
+
+}
