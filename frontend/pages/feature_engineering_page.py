@@ -53,6 +53,9 @@ The AI will automatically:
             st.session_state[
                 "engineered_dataset"
             ] = engineered_df
+            
+            # Make engineered dataset the active dataset
+            st.session_state["dataset"] = engineered_df
 
         st.success(
             "✅ Feature Engineering completed successfully!"

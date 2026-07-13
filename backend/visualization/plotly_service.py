@@ -24,6 +24,16 @@ class PlotlyService:
         )
 
     @staticmethod
+    def scatter_plot(df, x_column, y_column):
+
+        return px.scatter(
+            df,
+            x=x_column,
+            y=y_column,
+            title=f"{x_column} vs {y_column}"
+        )
+
+    @staticmethod
     def bar_chart(df, column):
 
         counts = (

@@ -3,10 +3,6 @@ class ExplainabilityIntelligence:
     @staticmethod
     def analyze(shap_results):
 
-        # --------------------------------------------
-        # SHAP Not Available
-        # --------------------------------------------
-
         if shap_results is None:
 
             return {
@@ -24,46 +20,46 @@ class ExplainabilityIntelligence:
                 ),
 
                 "message": (
-                    "SHAP analysis has not been generated yet.\n\n"
-                    "Run the Explainability module to identify "
-                    "the most influential features."
+                    "Run SHAP analysis first."
                 )
 
             }
 
-        # --------------------------------------------
-        # Try to read feature importance
-        # --------------------------------------------
-
-        top_features = shap_results.get(
-            "top_features",
+        feature_names = shap_results.get(
+            "feature_names",
             []
         )
 
-        if len(top_features) == 0:
+        importance = shap_results.get(
+            "importance",
+            []
+        )
 
-            observation = (
-                "SHAP analysis completed successfully."
+        top_features = []
+
+        if feature_names and importance:
+
+            pairs = list(
+                zip(feature_names, importance)
             )
 
-            feature_text = (
-                "Top feature information is currently unavailable."
+            pairs.sort(
+                key=lambda x: x[1],
+                reverse=True
             )
 
-        else:
+            top_features = [
+                feature
+                for feature, _ in pairs[:5]
+            ]
 
-            observation = (
-                "The model explanation was successfully generated."
-            )
+        feature_text = "\n".join(
 
-            feature_text = "\n".join(
-                f"• {feature}"
-                for feature in top_features
-            )
+            f"• {feature}"
 
-        # --------------------------------------------
-        # Return Intelligence
-        # --------------------------------------------
+            for feature in top_features
+
+        )
 
         return {
 
@@ -75,19 +71,15 @@ class ExplainabilityIntelligence:
 
             "top_features": top_features,
 
-            "observation": observation,
+            "observation": (
+                "SHAP feature importance generated successfully."
+            ),
 
             "message": (
 
-                "Explainability Status : Completed\n\n"
+                "Top Important Features\n\n"
 
-                "Most Important Features\n\n"
-
-                f"{feature_text}\n\n"
-
-                "Observation\n\n"
-
-                f"{observation}"
+                f"{feature_text}"
 
             )
 

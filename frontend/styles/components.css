@@ -1,0 +1,268 @@
+/* ==========================================================
+   AUTODS AI DESIGN SYSTEM
+   Grok / Vercel / Linear Inspired
+========================================================== */
+
+/* ---------- Glass Card ---------- */
+
+.glass-card{
+
+    background:#161C2D;
+
+    border-radius:22px;
+
+    border:1px solid #2B3550;
+
+    padding:28px;
+
+    box-shadow:0 8px 30px rgba(0,0,0,.30);
+
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+    background: linear-gradient(135deg, #7C3AED, #2563EB);
+    border-radius: 24px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(124,58,237,.35);
+}
+
+.hero-title{
+    font-size:46px;
+    font-weight:800;
+    color:white;
+    margin-bottom:12px;
+}
+
+.hero-subtitle{
+    color:#E5E7EB;
+    font-size:18px;
+}
+
+/* ---------- Metric Card ---------- */
+
+.metric-card{
+
+    background:#161C2D;
+
+    border:1px solid #2B3550;
+
+    border-radius:20px;
+
+    padding:28px;
+
+    min-height:180px;
+
+    transition:.25s;
+
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+
+}
+
+.metric-card:hover{
+
+    transform:translateY(-6px);
+
+    border:1px solid #7C3AED;
+
+    box-shadow:0 0 30px rgba(124,58,237,.45);
+
+}
+
+.metric-icon{
+
+    font-size:38px;
+
+    margin-bottom:18px;
+
+}
+
+.metric-title{
+
+    color:#94A3B8;
+
+    font-size:15px;
+
+    margin-bottom:16px;
+
+}
+
+.metric-value{
+
+    font-size:42px;
+
+    font-weight:800;
+
+}
+
+/* ---------- Status Badge ---------- */
+
+.status-online{
+
+    background:#10B981;
+
+    color:white;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    display:inline-block;
+
+    font-size:13px;
+
+}
+
+.status-warning{
+
+    background:#F59E0B;
+
+    color:white;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+}
+
+.status-error{
+
+    background:#EF4444;
+
+    color:white;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+}
+
+/* ---------- Section ---------- */
+
+.section-title{
+
+    color:white;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    margin-top:25px;
+
+    margin-bottom:20px;
+
+}
+
+h1,h2,h3{
+
+    margin-bottom:18px;
+
+}
+
+.block-container{
+
+    padding-top:2rem;
+
+    padding-left:2rem;
+
+    padding-right:2rem;
+
+    max-width:1600px;
+
+}
+
+[data-testid="stVerticalBlock"]{
+
+    gap:1.2rem;
+
+}
+
+/* =======================================================
+   GLOBAL TYPOGRAPHY
+======================================================= */
+
+body,
+p,
+span,
+label,
+div {
+    color: #E5E7EB !important;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+h1 {
+    color: white !important;
+    font-size: 46px;
+    font-weight: 800;
+}
+
+h2 {
+    color: white !important;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+h3 {
+    color: #F8FAFC !important;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+small {
+    color: #94A3B8 !important;
+}
+
+.stMarkdown {
+    color: #E5E7EB !important;
+}
+
+.stMarkdown p {
+    color: #E5E7EB !important;
+}
+
+.stMarkdown li {
+    color: #E5E7EB !important;
+}
+
+.stMarkdown strong {
+    color: white !important;
+}
+
+.stAlert {
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* ==========================================
+   SELECTBOX
+========================================== */
+
+.stSelectbox label {
+    color: white !important;
+    font-weight: 600;
+}
+
+.stSelectbox div[data-baseweb="select"] {
+    color: white !important;
+}
+
+.stSelectbox div[data-baseweb="select"] * {
+    color: white !important;
+}
+
+/* Dropdown menu */
+div[role="listbox"] {
+    background-color: #1B2235 !important;
+}
+
+div[role="option"] {
+    color: white !important;
+    background-color: #1B2235 !important;
+}
+
+div[role="option"]:hover {
+    background-color: #2A3350 !important;
+}

@@ -1,88 +1,80 @@
 import streamlit as st
+import pandas as pd
 
-from backend.explainability.shap_analyzer import SHAPAnalyzer
-from backend.explainability.shap_plots import SHAPPlots
-from backend.explainability.shap_utils import SHAPUtils
+from frontend.services.api_client import APIClient
 
 
 def render_shap_page():
-
     st.title("🧠 SHAP Explainability")
 
     # ----------------------------------
-    # Check AutoML Results
+    # Check Prerequisites
     # ----------------------------------
-
     if "automl_results" not in st.session_state:
         st.warning("⚠ Please train a model first from the AutoML page.")
         return
 
-    results = st.session_state["automl_results"]
+    if "dataset" not in st.session_state:
+        st.error("Dataset not found in session state.")
+        return
 
-    model = results["trained_model"]
-    X_train = results["X_train"]
+    if "target_column" not in st.session_state:
+        st.error("Target column not found in session state.")
+        return
 
-    st.success(f"✅ Best Model: {model.__class__.__name__}")
+    st.success("✅ Model trained successfully!")
 
     st.divider()
 
     # ----------------------------------
     # Generate SHAP Values
     # ----------------------------------
-
-    if st.button("🚀 Generate SHAP Values", use_container_width=True):
-
+    if st.button("🚀 Generate SHAP Values", use_container_width=True, type="primary"):
         with st.spinner("Generating SHAP explanations..."):
+            try:
+                results = APIClient.run_shap(
+                    df=st.session_state["dataset"],
+                    model_path=st.session_state["automl_results"]["model_path"],
+                    target_column=st.session_state["target_column"]
+                )
 
-            analyzer = SHAPAnalyzer(model, X_train)
+                st.session_state["shap_results"] = results
+                st.success("✅ SHAP values generated successfully!")
 
-            st.session_state["shap_results"] = analyzer.compute()
-
-        st.success("✅ SHAP values generated successfully!")
+            except Exception as e:
+                st.error(f"❌ Failed to generate SHAP values: {str(e)}")
+                return
 
     # ----------------------------------
     # Display Results
     # ----------------------------------
-
     if "shap_results" not in st.session_state:
+        st.info("Click the button above to generate SHAP explanations.")
         return
 
-    shap_values = st.session_state["shap_results"]["shap_values"]
+    results = st.session_state["shap_results"]
 
-    # ----------------------------------
-    # Feature Importance Chart
-    # ----------------------------------
-
+    # Feature Importance
     st.subheader("📊 Feature Importance")
 
-    try:
-        fig = SHAPPlots.bar_plot(shap_values)
-        st.pyplot(fig, clear_figure=True)
+    if "feature_names" in results and "importance" in results:
+        importance_df = pd.DataFrame({
+            "Feature": results["feature_names"],
+            "Importance": results["importance"]
+        })
 
-    except Exception as e:
-        st.error(f"Bar Plot Error:\n{e}")
-
-    st.divider()
-
-    # ----------------------------------
-    # Top Feature Importance Table
-    # ----------------------------------
-
-    st.subheader("🏆 Top Feature Importance")
-
-    try:
-
-        importance_df = SHAPUtils.feature_importance(shap_values)
+        importance_df = importance_df.sort_values(
+            "Importance", ascending=False
+        ).reset_index(drop=True)
 
         st.dataframe(
             importance_df,
             use_container_width=True,
             hide_index=True
         )
+    else:
+        st.warning("SHAP results format is unexpected. Missing 'feature_names' or 'importance' keys.")
 
-    except Exception as e:
-        st.error(f"Feature Importance Error:\n{e}")
-
+    # Optional: Add more SHAP visualizations here (e.g., summary plot, force plot, etc.)
     st.divider()
-
-   
+    st.caption("Additional SHAP visualizations (beeswarm, waterfall, etc.) can be added here.")

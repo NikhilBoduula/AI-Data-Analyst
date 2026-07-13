@@ -18,6 +18,7 @@ from frontend.pages.shap_page import render_shap_page
 from frontend.pages.business_page import render_business_page
 from frontend.pages.reports_page import render_reports_page
 from frontend.pages.chat_page import render_chat_page
+from frontend.styles.theme import load_theme
 
 logger = setup_logger()
 
@@ -26,6 +27,8 @@ st.set_page_config(
     page_icon="🤖",
     layout="wide"
 )
+
+load_theme()
 
 logger.info("Application Started")
 
@@ -85,7 +88,7 @@ elif selected_page == "🤖 AutoML":
 elif selected_page == "🧠 SHAP Explainability":
     render_shap_page()
 
-elif selected_page == "🧠 Business Insights":
+elif selected_page == "💼 Business Insights":
     render_business_page()
 
 elif selected_page == "📄 Reports":

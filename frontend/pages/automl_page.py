@@ -1,16 +1,16 @@
 import streamlit as st
 import pandas as pd
 
-from backend.ml.automl import AutoML
+from frontend.services.api_client import APIClient
 
 
 def render_automl_page():
 
     st.title("🤖 AI AutoML Center")
 
-    # -----------------------------
-    # Check Dataset
-    # -----------------------------
+    # ------------------------------------------------
+    # Select Active Dataset
+    # ------------------------------------------------
 
     if st.session_state.get("engineered_dataset") is not None:
 
@@ -30,9 +30,9 @@ def render_automl_page():
 
         return
 
-    # -----------------------------
+    # ------------------------------------------------
     # Dataset Information
-    # -----------------------------
+    # ------------------------------------------------
 
     st.subheader("📊 Dataset Information")
 
@@ -44,9 +44,9 @@ def render_automl_page():
 
     st.divider()
 
-    # -----------------------------
+    # ------------------------------------------------
     # Target Selection
-    # -----------------------------
+    # ------------------------------------------------
 
     st.subheader("🎯 Select Target Column")
 
@@ -55,27 +55,27 @@ def render_automl_page():
         df.columns
     )
 
-    task = AutoML.detect_task(df[target_column])
+    # Save target column for SHAP
+    st.session_state["target_column"] = target_column
 
-    if task == "classification":
-
-        st.success("Detected Task : Classification")
-
-    else:
-
-        st.success("Detected Task : Regression")
+    st.info("🤖 Task type will be detected automatically.")
 
     st.divider()
 
-    # -----------------------------
+    # ------------------------------------------------
     # Train Models
-    # -----------------------------
+    # ------------------------------------------------
 
-    if st.button("🚀 Train AI Models", use_container_width=True):
+    if st.button(
+        "🚀 Train AI Models",
+        use_container_width=True
+    ):
 
-        with st.spinner("Training multiple machine learning models..."):
+        with st.spinner(
+            "Training multiple machine learning models..."
+        ):
 
-            results = AutoML.run(
+            results = APIClient.run_automl(
                 df,
                 target_column
             )
@@ -84,11 +84,11 @@ def render_automl_page():
 
         st.success("✅ Training Completed!")
 
-    # -----------------------------
-    # Results
-    # -----------------------------
+    # ------------------------------------------------
+    # Show Results
+    # ------------------------------------------------
 
-    if "automl_results" in st.session_state:
+    if st.session_state.get("automl_results") is not None:
 
         results = st.session_state["automl_results"]
 
@@ -118,7 +118,7 @@ def render_automl_page():
         metric = results["metric"]
 
         st.info(
-            f"{metric} : {round(best[metric],4)}"
+            f"{metric} : {round(best[metric], 4)}"
         )
 
         st.success(
@@ -128,13 +128,9 @@ def render_automl_page():
         st.divider()
 
         st.download_button(
-
             "⬇ Download Leaderboard",
-
             leaderboard.to_csv(index=False),
-
             file_name="leaderboard.csv",
-
-            mime="text/csv"
-
+            mime="text/csv",
+            use_container_width=True
         )

@@ -6,29 +6,41 @@ from backend.reports.charts import ChartGenerator
 class ReportBuilder:
 
     @staticmethod
-    def build():
+    def build(report=None):
 
-        dataset = st.session_state.get("dataset")
+        # -------------------------------------------------
+        # If no report is supplied, use Streamlit session
+        # (keeps the current UI working)
+        # -------------------------------------------------
 
-        report = {
+        if report is None:
 
-            "dataset": dataset,
+            dataset = st.session_state.get("dataset")
 
-            "dataset_name": st.session_state.get("dataset_name"),
+            report = {
 
-            "quality_report": st.session_state.get("quality_report"),
+                "dataset": dataset,
 
-            "eda_results": st.session_state.get("eda_results"),
+                "dataset_name": st.session_state.get("dataset_name"),
 
-            "automl_results": st.session_state.get("automl_results"),
+                "quality_report": st.session_state.get("quality_report"),
 
-            "shap_results": st.session_state.get("shap_results"),
+                "eda_results": st.session_state.get("eda_results"),
 
-            "charts": []
+                "automl_results": st.session_state.get("automl_results"),
 
-        }
+                "shap_results": st.session_state.get("shap_results"),
 
-        # Automatically generate charts
+                "charts": []
+
+            }
+
+        # -------------------------------------------------
+        # Generate Charts
+        # -------------------------------------------------
+
+        dataset = report.get("dataset")
+
         if dataset is not None:
 
             report["charts"] = ChartGenerator.save_histograms(dataset)

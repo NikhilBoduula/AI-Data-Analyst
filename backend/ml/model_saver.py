@@ -5,7 +5,7 @@ import joblib
 class ModelSaver:
 
     @staticmethod
-    def save(model, filename="best_model.pkl"):
+    def save(model, filename):
 
         os.makedirs("models", exist_ok=True)
 

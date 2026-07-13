@@ -1,79 +1,156 @@
 import streamlit as st
-from backend.agents.business_agent import BusinessAgent
+
+from frontend.ui.hero import hero
+from frontend.services.api_client import APIClient
+
 
 def render_business_page():
-    st.title("🧠 Business Insights")
-    st.write("AI-generated insights based on your dataset and machine learning results.")
-    st.divider()
+    # =====================================================
+    # HERO
+    # =====================================================
+    hero(
+        "Business Intelligence",
+        "AI Executive Decision Center • Multi-Agent Analysis"
+    )
 
     dataset = st.session_state.get("dataset")
     if dataset is None:
-        st.info("Upload a dataset first.")
+        st.info("📂 Upload a dataset first.")
         return
 
     automl = st.session_state.get("automl_results")
     shap = st.session_state.get("shap_results")
 
-    # Generate insights
-    insights = BusinessAgent.generate(dataset, automl, shap)
-    st.session_state["business_insights"] = insights
+    if automl is None:
+        st.warning("⚠ Please complete AutoML first.")
+        return
 
-    # ----------------------------------------------------
-    # Display Business Insights
-    # ----------------------------------------------------
-    for insight in insights:
-        # 1. Handle dictionary-based insights (with titles)
-        if isinstance(insight, dict) and "title" in insight:
-            title = insight["title"]
+    if shap is None:
+        st.warning("⚠ Please generate SHAP explanations first.")
+        return
+
+    # ---------------------------------------
+    # Call FastAPI (Business Intelligence)
+    # ---------------------------------------
+    if st.session_state.get("business_insights") is None:
+        with st.spinner("Generating Business Intelligence..."):
             
-            with st.container(border=True):
-                st.subheader(title)
+            insights = APIClient.run_business(
+                st.session_state["dataset"],
+                automl,
+                shap
+            )
+            
+            
+           
 
-                # AI Decisions Module
-                if title == "🤖 AI Decisions":
-                    for decision in insight.get("message", []):
-                        st.markdown(f"### {decision.get('step', 'Step')}")
-                        
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.metric("🎯 Decision", decision.get("decision", "N/A"))
-                            st.metric("🔥 Priority", decision.get("priority", "N/A"))
-                        
-                        with col2:
-                            conf = decision.get("confidence", 0)
-                            st.metric("📊 Confidence", f"{conf}%")
-                            st.progress(conf / 100)
+            if insights is None:
+                st.error("Business API returned None.")
+                return
 
-                        st.info(f"📈 Expected Impact\n\n{decision.get('impact', 'N/A')}")
-                        st.success(f"💡 Reason\n\n{decision.get('reason', 'N/A')}")
-                        st.divider()
+            st.session_state["business_insights"] = insights
 
-                # Execution Agent Module
-                elif title == "⚙️ Execution Agent":
-                    for action in insight.get("actions", []):
-                        st.markdown(f"### {action.get('task', 'Task')}")
-                        
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.metric("📌 Status", action.get("status", "N/A"))
-                        
-                        with col2:
-                            status = action.get("status", "")
-                            color = "🟢"
-                            if status == "Pending":
-                                color = "🟠"
-                            elif status == "Suggested":
-                                color = "🔵"
-                            st.write(f"### {color}")
+    insights = st.session_state["business_insights"]
+    
 
-                        st.info(f"📝 Description\n\n{action.get('description', 'N/A')}")
-                        st.divider()
-                
-                # Default case for other dictionary-based insights
-                else:
-                    st.write(insight.get("message", insight))
-        
-        # 2. Handle raw data objects (no title)
+    # =====================================================
+    # Categorize Insights
+    # =====================================================
+    executive = None
+    reasoning = None
+    decisions = None
+    execution = None
+    intelligence = []
+
+    for insight in insights:
+        if not isinstance(insight, dict):
+            continue
+
+        title = insight.get("title", "")
+
+        if title == "📋 Executive Summary":
+            executive = insight
+        elif title == "🧠 AI Reasoning":
+            reasoning = insight
+        elif title == "🤖 AI Decisions":
+            decisions = insight
+        elif title == "⚙️ Execution Agent":
+            execution = insight
         else:
-            with st.container(border=True):
-                st.write(insight)
+            intelligence.append(insight)
+
+    # =====================================================
+    # EXECUTIVE SUMMARY + AI REASONING
+    # =====================================================
+    left, right = st.columns(2)
+
+    with left:
+        with st.container(border=True):
+            st.subheader("📋 Executive Summary")
+            if executive and executive.get("message"):
+                st.write(executive["message"])
+            else:
+                st.write("No executive summary available.")
+
+    with right:
+        with st.container(border=True):
+            st.subheader("🧠 AI Reasoning")
+            if reasoning and reasoning.get("message"):
+                st.write(reasoning["message"])
+            else:
+                st.write("No reasoning available.")
+
+    st.divider()
+
+    # =====================================================
+    # AI DECISIONS + EXECUTION AGENT
+    # =====================================================
+    left, right = st.columns(2)
+
+    with left:
+        with st.container(border=True):
+            st.subheader("🤖 AI Decisions")
+            if decisions and isinstance(decisions.get("message"), list):
+                for decision in decisions["message"]:
+                    st.markdown(f"### {decision.get('step', 'Decision Step')}")
+
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        st.metric("Decision", decision.get("decision", "N/A"))
+                        st.metric("Priority", decision.get("priority", "N/A"))
+
+                    with c2:
+                        confidence = decision.get("confidence", 0)
+                        st.metric("Confidence", f"{confidence}%")
+                        st.progress(confidence / 100)
+
+                    st.info(decision.get("impact", ""))
+                    st.success(decision.get("reason", ""))
+                    st.divider()
+            else:
+                st.info("No decisions available.")
+
+    with right:
+        with st.container(border=True):
+            st.subheader("⚙️ Execution Agent")
+            if execution and isinstance(execution.get("actions"), list):
+                for action in execution["actions"]:
+                    st.markdown(f"### {action.get('task', 'Task')}")
+                    st.metric("Status", action.get("status", "N/A"))
+                    st.info(action.get("description", ""))
+                    st.divider()
+            else:
+                st.info("No execution plan available.")
+
+    # =====================================================
+    # INTELLIGENCE MODULES
+    # =====================================================
+    if intelligence:
+        st.markdown("## 📊 Intelligence Modules")
+        cols = st.columns(2)
+
+        for index, module in enumerate(intelligence):
+            with cols[index % 2]:
+                with st.container(border=True):
+                    st.subheader(module.get("title", "Module"))
+                    st.write(module.get("message", ""))

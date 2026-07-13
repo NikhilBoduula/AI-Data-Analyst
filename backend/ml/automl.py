@@ -31,6 +31,13 @@ class AutoML:
         y = df[target_column]
 
         task = AutoML.detect_task(y)
+        
+        print("=" * 50)
+        print("Target Column:", target_column)
+        print("Target dtype:", y.dtype)
+        print("Unique Values:", y.nunique())
+        print("Detected Task:", task)
+        print("=" * 50)
 
         X_train, X_test, y_train, y_test = train_test_split(
             X,
@@ -114,7 +121,8 @@ class AutoML:
         ]
 
         model_path = ModelSaver.save(
-            best_model
+            best_model,
+            "best_model.pkl"
         )
 
         # -------------------------
@@ -131,18 +139,8 @@ class AutoML:
 
     "best_model": best,
 
-    "trained_model": best_model,
-
-    "X_train": X_train,
-
-    "X_test": X_test,
-
-    "y_train": y_train,
-
-    "y_test": y_test,
-
     "feature_names": X.columns.tolist(),
 
-    "model_path": model_path
+    "model_path": str(model_path)
 
 }
