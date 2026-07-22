@@ -244,7 +244,7 @@ AutonoSci-AI/
 ## Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/AutonoSci-AI.git
+git clone https://github.com/NikhilBoduula/AutonoSci-AI.git
 ```
 
 ## Install Requirements
